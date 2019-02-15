@@ -9,8 +9,8 @@ LABEL "com.github.actions.color"="gray-dark"
 LABEL "com.github.actions.name"="Helm"
 LABEL "com.github.actions.description"="This is an Action to run Helm commands."
 
-ENV KUBECTL_VERSION="v1.11.3"
-ENV HELM_VERSION="v2.11.0"
+ENV KUBECTL_VERSION="v1.9.7"
+ENV HELM_VERSION="v2.9.1"
 
 RUN curl -Lo /tmp/helm-linux-amd64.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz \
     && tar -xvf /tmp/helm-linux-amd64.tar.gz -C /tmp/ \
