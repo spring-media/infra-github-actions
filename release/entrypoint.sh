@@ -27,7 +27,7 @@ request_create_release(){
 	json_body=$(echo "$json_body" | sed "s/@description@/$DESCRIPTION/")
 
 	curl --request POST \
-	  --url https://api.github.com/repos/$GITHUB_REPO/releases \
+	  --url https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
 	  --header "Authorization: Bearer $GITHUB_TOKEN" \
 	  --header 'Content-Type: application/json' \
 	  --data "$json_body"
