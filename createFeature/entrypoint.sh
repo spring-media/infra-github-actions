@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+#!/bin/ash
+set -eu
 set -o pipefail
 
 main() {
@@ -11,7 +11,7 @@ main() {
    git checkout $current_release_branch
    git checkout -b feature/$issuenr
    git push origin feature/$issuenr
-   curl -X POST -H "Accept: application/vnd.github.squirrel-girl-preview" -H"Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$1/issues/$issuenr/comments -d '{"body": "https://github.com/'$1'/tree/feature/'$issuenr'"}'
+   curl -X POST -H "Accept: application/vnd.github.squirrel-girl-preview" -H"Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GITHUB_REPO/issues/$issuenr/comments -d '{"body": "https://github.com/'$GITHUB_REPO'/tree/feature/'$issuenr'"}'
 }
 
 main

@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/ash
 ################################################################################
 # Description:
 #   Script Github Actions to create a new release automatically
 ################################################################################
 
-set -e
+set -eu
 set -o pipefail
 
 # ============================================
@@ -27,7 +27,7 @@ request_create_release(){
 	json_body=$(echo "$json_body" | sed "s/@description@/$DESCRIPTION/")
 
 	curl --request POST \
-	  --url https://api.github.com/repos/$1/releases \
+	  --url https://api.github.com/repos/$GITHUB_REPO/releases \
 	  --header "Authorization: Bearer $GITHUB_TOKEN" \
 	  --header 'Content-Type: application/json' \
 	  --data "$json_body"
