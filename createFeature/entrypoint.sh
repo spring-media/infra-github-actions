@@ -4,7 +4,6 @@
 # Description:
 #   Script Github Actions to create a new feature branch automatically
 ################################################################################
-set -eu
 set -o pipefail
 
 echo "DEBUG: start to create new feature branch!"
@@ -12,7 +11,7 @@ echo "DEBUG: start to create new feature branch!"
 issue_nr=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
 echo "DEBUG: issue number: $issue_nr"
 
-current_release_branch=$(git branch | grep "release")
+current_release_branch=$(git branch | grep "release" 2>&1)
 echo "DEBUG: current release branch: $current_release_branch"
 
 git checkout $current_release_branch
