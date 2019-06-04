@@ -17,4 +17,4 @@ echo "DEBUG: current release branch: '$current_release_branch'"
 git checkout $current_release_branch
 git checkout -b feature/$issuenr
 git push origin feature/$issuenr
-curl -X POST -H "Accept: application/vnd.github.squirrel-girl-preview" -H"Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$issuenr/comments -d '{"body": "https://github.com/'$GITHUB_REPOSITORY'/tree/feature/'$issuenr'"}'
+curl -X POST -H "Accept: application/vnd.github.squirrel-girl-preview" -H"Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/"$GITHUB_REPOSITORY"/issues/$issuenr/comments -d '{"body": "https://github.com/'"$GITHUB_REPOSITORY"'/tree/feature/'$issuenr'"}'
