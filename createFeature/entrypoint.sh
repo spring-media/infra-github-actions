@@ -5,6 +5,9 @@ set -o pipefail
 main() {
    issuenr=$(jq --raw-output .issue.number "$GITHUB_EVENT_PATH")
    current_release_branch=$(git branch | grep "release")
+   echo "DEBUG: issue number: '$issuenr'"
+   echo "DEBUG: current release branch: '$current_release_branch'"
+
    git checkout $current_release_branch
    git checkout -b feature/$issuenr
    git push origin feature/$issuenr
