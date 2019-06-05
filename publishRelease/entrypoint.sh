@@ -33,6 +33,15 @@ request_create_release(){
 	  --data "$json_body"
 }
 
+create_new_release_branch() {
+    echo "DEBUG: start to create new release branch!"
+
+    new_release_branch_version="v${first_tag_number}."$(echo "$new_tag + 1" | bc)".0"
+
+    git checkout -b release/"$new_release_branch_version"
+    git push origin release/"$new_release_branch_version"
+}
+
 # ============================================
 # Function to get last release branch name
 # ============================================
@@ -74,6 +83,7 @@ if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;the
 		if [ "$(git tag | wc -l)" = "0" ];then
 			git_tag="v1.0.0"
 			request_create_release
+			create_new_release_branch
 		else
             first_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f1)
             last_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f2)
@@ -81,6 +91,7 @@ if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;the
 			# git_tag="v${new_tag}.0"
 			git_tag="v${first_tag_number}.${new_tag}.0"
 			request_create_release
+			create_new_release_branch
 		fi
 	# if env var $VERSION exist, use it
 	else
@@ -106,6 +117,7 @@ if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;the
 		# if everything ok, the new version is env $VERSION
 		git_tag="$VERSION"
 		request_create_release
+		create_new_release_branch
 	fi
 
 else
