@@ -7,7 +7,7 @@
 set -o pipefail
 
 getRelease() {
-    git branch | grep release
+    git branch -a | grep release | sort -V | tail -n 1
 }
 
 getIssueNr() {
@@ -19,7 +19,7 @@ echo "DEBUG: start to create new feature branch!"
 issue_nr="$(getIssueNr)"
 echo "DEBUG: issue number: $issue_nr"
 
-current_release_branch=$(git branch -a | grep release)
+current_release_branch="$(getRelease)"
 echo "DEBUG: current release branch: $current_release_branch"
 
 git checkout "$current_release_branch"
