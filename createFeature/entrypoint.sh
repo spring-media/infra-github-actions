@@ -19,9 +19,7 @@ echo "DEBUG: start to create new feature branch!"
 issue_nr="$(getIssueNr)"
 echo "DEBUG: issue number: $issue_nr"
 
-git status
-git branch
-current_release_branch=$(git branch | grep release)
+current_release_branch=$(git branch -a | grep release)
 echo "DEBUG: current release branch: $current_release_branch"
 
 git checkout "$current_release_branch"
