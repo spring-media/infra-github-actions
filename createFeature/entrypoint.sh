@@ -7,7 +7,7 @@
 set -o pipefail
 
 getRelease() {
-    git branch -a | grep release | sort -n | tail -n 1
+    git branch -a | grep release | sort -n | tail -n 1 | cut -c 3-
 }
 
 getIssueNr() {
