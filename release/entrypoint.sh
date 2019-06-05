@@ -1,4 +1,5 @@
 #!/bin/ash
+# shellcheck shell=dash
 ################################################################################
 # Description:
 #   Script Github Actions to create a new release automatically
@@ -27,34 +28,54 @@ request_create_release(){
 	json_body=$(echo "$json_body" | sed "s/@description@/$DESCRIPTION/")
 
 	curl --request POST \
-	  --url https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
+	  --url https://api.github.com/repos/"$GITHUB_REPOSITORY"/releases \
 	  --header "Authorization: Bearer $GITHUB_TOKEN" \
 	  --header 'Content-Type: application/json' \
 	  --data "$json_body"
 }
 
+# ============================================
+# Function to get last release branch name
+# ============================================
+getRelease() {
+    git branch -a | grep release | sort -n | tail -n 1 | cut -c 3-
+}
+
+# ============================================
+# Function to get the head of the given git branch
+# ============================================
+getHead() {
+    git rev-parse "$1"
+}
+
 # ==================== MAIN ====================
 
 # Ensure that the GITHUB_TOKEN secret is included
-if [[ -z "$GITHUB_TOKEN" ]]; then
+if [ -z "$GITHUB_TOKEN" ]; then
   echo "Set the GITHUB_TOKEN env variable."
   exit 1
 fi
 
-last_branch=$(git rev-parse --abbrev-ref '@{-1}')
 current_branch=$(git branch | grep "^*" | awk '{print $2}')
-echo "DEBUG: last branch = $last_branch"
 echo "DEBUG: current branch = $current_branch"
-if [ "$current_branch" = "master" ] && git rev-parse --abbrev-ref '@{-1}' | grep "release" ;then
+
+master_head=$(getHead master)
+echo "DEBUG: master head: $master_head"
+current_release_branch=$(getRelease)
+echo "DEBUG: current release branch: $current_release_branch"
+release_head=$(getHead "$current_release_branch")
+echo "DEBUG: release head: $release_head"
+
+if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;then
 
 	first_tag_number=$(git tag -l | sort -V | tail -n 1 | cut -c 2- | cut -d '.' -f1)
 	last_tag_number=$(git tag -l | sort -V | tail -n 1 | cut -c 2- | cut -d '.' -f2)
 
 	# if not exist env var $VERSION
 	# get tag by 'git tag' command
-	if [[ -z "$VERSION" ]]; then
+	if [ -z "$VERSION" ]; then
 		# If null, is the first release
-		if [ $(git tag | wc -l) = "0" ];then
+		if [ "$(git tag | wc -l)" = "0" ];then
 			git_tag="v1.0.0"
 			request_create_release
 		else
@@ -68,7 +89,7 @@ if [ "$current_branch" = "master" ] && git rev-parse --abbrev-ref '@{-1}' | grep
 		echo "DEBUG: env VERSION = $VERSION"
 		# if en var $VERSION don't start with 'v', add 'v' in
 		# start of string
-		if [ $(echo "$VERSION" | cut -c 1) != 'v' ];then
+		if [ "$(echo "$VERSION" | cut -c 1)" != 'v' ];then
 			VERSION="v$VERSION"
 		fi
 
@@ -78,8 +99,8 @@ if [ "$current_branch" = "master" ] && git rev-parse --abbrev-ref '@{-1}' | grep
 			exit 1
 		fi
 
-		first_number_version=$(echo $VERSION | cut -c 2)
-		if [ $first_number_version -lt $last_tag_number ];then
+		first_number_version=$(echo "$VERSION" | cut -c 2)
+		if [ "$first_number_version" -lt "$last_tag_number" ];then
 			echo "the env var $VERSION is less than last tag: $last_tag_number"
 			exit 1
 		fi
@@ -90,6 +111,6 @@ if [ "$current_branch" = "master" ] && git rev-parse --abbrev-ref '@{-1}' | grep
 	fi
 
 else
-	echo "This Action run only in master branch and for release branches"
+	echo "This Action run only in master branch if release branches was merged"
 	exit 0
 fi
