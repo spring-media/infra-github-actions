@@ -14,5 +14,5 @@ current_release_branch="$(getRelease)"
 echo "DEBUG: current release branch: $current_release_branch"
 
 git checkout "$current_release_branch"
-git rebase master
-git push
+git rebase origin/master
+git push origin HEAD:"$(echo "$current_release_branch" | cut -c 16-)"
