@@ -5,7 +5,6 @@
 #   Script Github Actions to create a new release automatically
 ################################################################################
 
-set -eu
 set -o pipefail
 
 # ============================================
@@ -68,9 +67,6 @@ echo "DEBUG: release head: $release_head"
 
 if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;then
 
-	first_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f1)
-	last_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f2)
-
 	# if not exist env var $VERSION
 	# get tag by 'git tag' command
 	if [ -z "$VERSION" ]; then
@@ -79,6 +75,8 @@ if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;the
 			git_tag="v1.0.0"
 			request_create_release
 		else
+            first_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f1)
+            last_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f2)
 			new_tag=$(echo "$last_tag_number + 1" | bc)
 			# git_tag="v${new_tag}.0"
 			git_tag="v${first_tag_number}.${new_tag}.0"
