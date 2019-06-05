@@ -68,8 +68,8 @@ echo "DEBUG: release head: $release_head"
 
 if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;then
 
-	first_tag_number=$(git tag -l | sort -V | tail -n 1 | cut -c 2- | cut -d '.' -f1)
-	last_tag_number=$(git tag -l | sort -V | tail -n 1 | cut -c 2- | cut -d '.' -f2)
+	first_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f1)
+	last_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f2)
 
 	# if not exist env var $VERSION
 	# get tag by 'git tag' command
