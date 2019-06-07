@@ -2,8 +2,7 @@
 # shellcheck shell=dash
 ################################################################################
 # Description:
-#   Script Github Actions to create a new release automatically and a new
-#   release branch with new version.
+#   Script Github Actions to create a new release automatically 
 ################################################################################
 
 set -o pipefail
@@ -35,16 +34,6 @@ request_create_release(){
 	  --data "$json_body"
 }
 
-create_new_release_branch() {
-    new_release_branch="release/$git_tag"
-
-    echo "DEBUG: create new release branch: $new_release_branch!"
-
-    git checkout -b release/"$new_release_branch"
-    git push origin release/"$new_release_branch"
-}
-
-
 # ==================== MAIN ====================
 
 # Ensure that the GITHUB_TOKEN secret is included
@@ -64,7 +53,6 @@ fi
 if [ "$(git tag | wc -l)" = "0" ]; then
         git_tag="v1.0.0"
         request_create_release
-        create_new_release_branch
 else
     new_release=$(cat VERSION)
     echo "DEBUG: new release: $new_release"
@@ -83,6 +71,5 @@ else
     else
         git_tag="$new_release"
         request_create_release
-        create_new_release_branch
     fi
 fi
