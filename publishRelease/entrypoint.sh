@@ -2,7 +2,8 @@
 # shellcheck shell=dash
 ################################################################################
 # Description:
-#   Script Github Actions to create a new release automatically
+#   Script Github Actions to create a new release automatically and a new
+#   release branch with new version.
 ################################################################################
 
 set -o pipefail
@@ -11,6 +12,7 @@ set -o pipefail
 # Function to create a new release in Github API
 # ============================================
 request_create_release(){
+    echo "DEBUG: create new release with tag: $git_tag"
 
 	local json_body='{
 	  "tag_name": "@tag_name@",
@@ -34,27 +36,14 @@ request_create_release(){
 }
 
 create_new_release_branch() {
-    echo "DEBUG: start to create new release branch!"
+    new_release_branch="release/$git_tag"
 
-    new_release_branch_version="v${first_tag_number}."$(echo "$new_tag + 1" | bc)".0"
+    echo "DEBUG: create new release branch: $new_release_branch!"
 
-    git checkout -b release/"$new_release_branch_version"
-    git push origin release/"$new_release_branch_version"
+    git checkout -b release/"$new_release_branch"
+    git push origin release/"$new_release_branch"
 }
 
-# ============================================
-# Function to get last release branch name
-# ============================================
-getRelease() {
-    git branch -a | grep release | sort -n | tail -n 1 | cut -c 3-
-}
-
-# ============================================
-# Function to get the head of the given git branch
-# ============================================
-getHead() {
-    git rev-parse "$1"
-}
 
 # ==================== MAIN ====================
 
@@ -67,60 +56,33 @@ fi
 current_branch=$(git branch | grep "^*" | awk '{print $2}')
 echo "DEBUG: current branch = $current_branch"
 
-master_head=$(getHead master)
-echo "DEBUG: master head: $master_head"
-current_release_branch=$(getRelease)
-echo "DEBUG: current release branch: $current_release_branch"
-release_head=$(getHead "$current_release_branch")
-echo "DEBUG: release head: $release_head"
-
-if [ "$current_branch" = "master" ] && [ "$master_head" = "$release_head" ] ;then
-
-	# if not exist env var $VERSION
-	# get tag by 'git tag' command
-	if [ -z "$VERSION" ]; then
-		# If null, is the first release
-		if [ "$(git tag | wc -l)" = "0" ];then
-			git_tag="v1.0.0"
-			request_create_release
-			create_new_release_branch
-		else
-            first_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f1)
-            last_tag_number=$(git tag -l | sort -n | tail -n 1 | cut -c 2- | cut -d '.' -f2)
-			new_tag=$(echo "$last_tag_number + 1" | bc)
-			# git_tag="v${new_tag}.0"
-			git_tag="v${first_tag_number}.${new_tag}.0"
-			request_create_release
-			create_new_release_branch
-		fi
-	# if env var $VERSION exist, use it
-	else
-		echo "DEBUG: env VERSION = $VERSION"
-		# if en var $VERSION don't start with 'v', add 'v' in
-		# start of string
-		if [ "$(echo "$VERSION" | cut -c 1)" != 'v' ];then
-			VERSION="v$VERSION"
-		fi
-
-		# verify if $VERSION already exist in git tag list
-		if git tag -l | grep -q "$VERSION";then
-			echo "tag $VERSION already exist"
-			exit 1
-		fi
-
-		first_number_version=$(echo "$VERSION" | cut -c 2)
-		if [ "$first_number_version" -lt "$last_tag_number" ];then
-			echo "the env var $VERSION is less than last tag: $last_tag_number"
-			exit 1
-		fi
-
-		# if everything ok, the new version is env $VERSION
-		git_tag="$VERSION"
-		request_create_release
-		create_new_release_branch
-	fi
-
-else
-	echo "This Action run only in master branch if release branches was merged"
+if [ "$current_branch" != "master" ]; then
+    echo "This Action run only in master branch"
 	exit 0
+fi
+
+if [ "$(git tag | wc -l)" = "0" ]; then
+        git_tag="v1.0.0"
+        request_create_release
+        create_new_release_branch
+else
+    new_release=$(cat VERSION)
+    echo "DEBUG: new release: $new_release"
+
+    if [ -z "$new_release" ]; then
+        echo "no new release found. Edit ./VERSION with v\d.\d.\d"
+        exit 1
+    fi
+
+    current_release=$(git tag -l | sort -n | tail -n 1)
+    echo "DEBUG: current release = $current_release"
+
+    if [ "$current_release" = "$new_release" ]; then
+        echo "Nothing to do"
+        exit 0
+    else
+        git_tag="$new_release"
+        request_create_release
+        create_new_release_branch
+    fi
 fi
