@@ -1,5 +1,4 @@
-#!/bin/ash
-# shellcheck shell=dash
+#!/bin/bash
 ################################################################################
 # Description:
 #   Script Github Actions to create a new release automatically
@@ -50,19 +49,15 @@ testvercomp () {
         2) echo "new version is older than last version."
            exit 1;;
     esac
-    if [[ $op != $3 ]]
-    then
-        echo "FAIL: Expected '$3', Actual '$op', Arg1 '$1', Arg2 '$2'"
-    fi
 }
 
 vercomp () {
-    if [[ $1 == $2 ]]
+    if [ $1 == $2 ]
     then
         return 0
     fi
     local IFS=.
-    local i ver1=($1) ver2=($2)
+    local i ver1=$1 ver2=$2
     # fill empty fields in ver1 with zeros
     for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
     do
@@ -119,7 +114,7 @@ else
     last_release=$(git tag -l | sort -n | tail -n 1)
     echo "DEBUG: last release = $last_release"
 
-    testvercomp $(echo "$new_release" | sort -n | tail -n 1 | cut -c 2-) $(echo "$last_release" | sort -n | tail -n 1 | cut -c 2-)
+    testvercomp "$(echo "$new_release" | sort -n | tail -n 1 | cut -c 2-) $(echo "$last_release" | sort -n | tail -n 1 | cut -c 2-)"
 
     git_tag="$new_release"
 
