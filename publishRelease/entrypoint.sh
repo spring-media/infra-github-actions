@@ -91,10 +91,10 @@ if [ -z "$GITHUB_TOKEN" ]; then
   exit 1
 fi
 
-current_branch=$(git branch | grep "^*" | awk '{print $2}')
-echo "DEBUG: current branch = $current_branch"
+echo "DEBUG: current branch = $GITHUB_REF"
 
-if [ "$current_branch" != "master" ]; then
+master_branch=$(echo "$GITHUB_REF" | grep "master")
+if [ -z "$master_branch" ]; then
     echo "This Action run only in master branch."
 	exit 0
 fi
