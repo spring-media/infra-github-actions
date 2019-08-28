@@ -34,7 +34,17 @@ request_create_feature_release(){
 }
 
 request_create_bugfix_release() {
+      # Ensure that the REPO_WRITE_TOKEN secret is included
+    if [ -z "$REPO_WRITE_TOKEN" ]; then
+      echo "Set the REPO_WRITE_TOKEN env variable with write credential for this repository."
+      exit 1
+    fi
+
     echo "DEBUG: create bugfix tag = $git_tag"
+
+    git remote set-url origin https://$REPO_WRITE_TOKEN:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
+    git config --global user.email "action@github.com"
+    git config --global user.name "GitHub Action"
 
     git tag "$git_tag"
     git push origin "$git_tag"
