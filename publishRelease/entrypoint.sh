@@ -109,6 +109,9 @@ if [ -z "$master_branch" ]; then
 	exit 0
 fi
 
+echo "DEBUG: list tags"
+git tag
+
 if [ "$(git tag | wc -l)" = "0" ]; then
         git_tag="v1.0.0"
         request_create_feature_release
