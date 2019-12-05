@@ -109,7 +109,10 @@ if [ -z "$master_branch" ]; then
 	exit 0
 fi
 
-echo "DEBUG: list tags"
+
+echo "DEBUG: git fetch"
+git fetch --tags
+echo "DEBUG: git list tags"
 git tag -l
 
 if [ "$(git tag -l | wc -l)" = "0" ]; then
