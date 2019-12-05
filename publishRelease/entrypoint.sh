@@ -110,9 +110,9 @@ if [ -z "$master_branch" ]; then
 fi
 
 echo "DEBUG: list tags"
-git tag
+git tag -l
 
-if [ "$(git tag | wc -l)" = "0" ]; then
+if [ "$(git tag -l | wc -l)" = "0" ]; then
         git_tag="v1.0.0"
         request_create_feature_release
 else
