@@ -64,7 +64,7 @@ function trigger_workflow {
     -H "Accept: application/vnd.github.everest-preview+json" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
-    --data "{\"event_type\": \"${event_type}\", \"client_payload\": ${client_payload} }"
+    --data "{\"event_type\": \"${event_type}\", \"client_payload\": ${INPUT_CLINT_PAYLOAD} }"
   sleep $wait_interval
 }
 
