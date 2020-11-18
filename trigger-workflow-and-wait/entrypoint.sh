@@ -59,7 +59,10 @@ function validate_args {
 
 function trigger_workflow {
   echo "https://api.github.com/repos/${INPUT_OWNER}/${INPUT_REPO}/dispatches"
-  echo "client_payload: $client_payload"
+  echo "client_payload: "$client_payload
+  echo "client_payload2: "$INPUT_CLIENT_PAYLOAD
+  echo "event_type: ${event_type}"
+  echo "all: "$@
   curl -X POST "https://api.github.com/repos/${INPUT_OWNER}/${INPUT_REPO}/dispatches" \
     -H "Accept: application/vnd.github.everest-preview+json" \
     -H "Content-Type: application/json" \
