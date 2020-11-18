@@ -8,8 +8,6 @@ function usage_docs {
   echo "    github_token: \${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}"
 }
 
-# TODO - Add client_payload
-
 function validate_args {
   wait_interval=10
   if [ "$INPUT_WAITING_INTERVAL" ]
@@ -46,17 +44,17 @@ function validate_args {
     event_type=$INPUT_EVENT_TYPE
   fi
 
+  ref="master"
+  if [ $INPUT_REF ]
+  then
+    ref=$INPUT_REF
+  fi
+
   client_payload={}
   if [ "$INPUT_CLINT_PAYLOAD" ]
   then
     client_payload=$INPUT_CLINT_PAYLOAD
   fi
-
-  ref="master"
-  if [ $INPUT_REF ]
-  then
-    ref=$INPUT_REF
-  fi 
 }
 
 function trigger_workflow {
@@ -65,7 +63,7 @@ function trigger_workflow {
     -H "Accept: application/vnd.github.everest-preview+json" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${INPUT_GITHUB_TOKEN}" \
-    --data "{\"event_type\": \"${event_type}\", \"client_payload\": \"${client_payload}\" }"
+    --data "{\"event_type\": \"${event_type}\", \"client_payload\": ${client_payload} }"
   sleep $wait_interval
 }
 
