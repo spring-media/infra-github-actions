@@ -75,15 +75,18 @@ function wait_for_workflow_to_finish {
   echo "The job id is [$last_run_id]."
   echo ""
   conclusion=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/check-runs/$last_run_id" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '.conclusion')
+  status=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/check-runs/$last_run_id" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '.status')
 
-  while [[ $conclusion == "null" ]]
+  while [[ $conclusion == "null" && $status != "\"completed\"" ]]
   do
     sleep $wait_interval
     conclusion=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/check-runs/$last_run_id" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '.conclusion')
+    status=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/check-runs/$last_run_id" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '.status')
     echo "Checking conclusion [$conclusion]"
+    echo "Checking status [$status]"
   done
 
-  if [[ $conclusion == "\"success\"" ]]
+  if [[ $conclusion == "\"success\"" && $status == "\"completed\"" ]]
   then
     echo "Yes, success"
   else
