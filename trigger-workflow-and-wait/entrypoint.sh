@@ -83,11 +83,11 @@ function wait_for_workflow_to_finish {
   while [[ $conclusion == "null" && $status != "\"completed\"" ]]
   do
     sleep $wait_interval
-    last_workflow=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/runs" \
+    workflow=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/runs" \
       -H 'Accept: application/vnd.github.antiope-preview+json' \
-      -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '[.workflow_runs[]] | first')
-    conclusion=$(echo $last_workflow | jq '.conclusion')
-    status=$(echo $last_workflow | jq '.status')
+      -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '.workflow_runs[] | select(.id == '$last_workflow_id')')
+    conclusion=$(echo $workflow | jq '.conclusion')
+    status=$(echo $workflow | jq '.status')
     echo "Checking conclusion [$conclusion]"
     echo "Checking status [$status]"
   done
