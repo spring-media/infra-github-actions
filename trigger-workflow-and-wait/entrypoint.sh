@@ -109,17 +109,3 @@ function main {
 }
 
 main
-
-
-
-curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/runs/393717458/jobs" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN"
-curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/workflows/workflowtest.yml/runs" -H 'Accept: application/vnd.github.antiope-preview+json' -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '[.workflow_runs[].id] | first'
-curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/workflows/workflowtest.yml/runs"     -H 'Accept: application/vnd.github.antiope-preview+json'     -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '[.workflow_runs[]] | first'
-"status": "queued"
-"conclusion": null,
-
-"status": "in_progress",
-"conclusion": null,
-
-"status": "completed",
-"conclusion": "success",
