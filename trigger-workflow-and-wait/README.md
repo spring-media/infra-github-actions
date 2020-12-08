@@ -28,4 +28,5 @@ When deploying an app you may need to deploy additional services, this Github Ac
     owner: keithconvictional
     repo: myrepo
     github_token: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+    workflow_file_name: main.yml
 ```
