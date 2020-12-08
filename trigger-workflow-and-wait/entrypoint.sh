@@ -97,7 +97,7 @@ function wait_for_workflow_to_finish {
     echo "Yes, success"
   else
     # Alternative "failure"
-    ERROR="Conclusion is not success, its [$conclusion]. see https://github.com/$INPUT_OWNER/$INPUT_REPO/actions/runs/$last_workflow"
+    ERROR="Conclusion is not success, its [$conclusion]. see https://github.com/$INPUT_OWNER/$INPUT_REPO/actions/runs/$last_workflow_id"
     echo -e "::error ::$ERROR"
     exit 1
   fi
