@@ -75,12 +75,14 @@ function wait_for_workflow_to_finish {
     -H 'Accept: application/vnd.github.antiope-preview+json' \
     -H "Authorization: Bearer $INPUT_GITHUB_TOKEN" | jq '[.workflow_runs[]] | first')
   last_workflow_id=$(echo $last_workflow | jq '.id')
-  echo "The workflow id is [$last_workflow_id]."
-  echo ""
   conclusion=$(echo $last_workflow | jq '.conclusion')
   status=$(echo $last_workflow | jq '.status')
+  echo "The workflow id is [$last_workflow_id]."
+  echo "The initial conclustion is [$conclusion]."
+  echo "The initial status is [$status]."
+  echo ""
 
-  while [[ $conclusion == "null" && $status != "\"completed\"" ]]
+  while [[ $conclusion == "null" ]]
   do
     sleep $wait_interval
     workflow=$(curl -X GET "https://api.github.com/repos/$INPUT_OWNER/$INPUT_REPO/actions/workflows/$INPUT_WORKFLOW_FILE_NAME/runs" \
