@@ -29,5 +29,5 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: entrypoint.sh
+    - run: ${{ github.action_path }}/trigger-workflow-and-wait.sh
       shell: bash
