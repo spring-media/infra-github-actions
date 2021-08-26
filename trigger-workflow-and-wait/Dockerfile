@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/alpine
-FROM alpine:latest
+FROM spring-docker.jfrog.io/alpine:latest
 
 RUN apk update
 RUN apk --no-cache add curl
