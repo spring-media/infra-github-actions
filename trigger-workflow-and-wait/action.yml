@@ -27,5 +27,7 @@ inputs:
     description: "JSON payload with extra information about the webhook event that your action or worklow may use. Default: {}"
     required: false
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "composite"
+  steps:
+    - run: entrypoint.sh
+      shell: bash
