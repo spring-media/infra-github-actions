@@ -27,6 +27,7 @@ inputs:
     description: "JSON payload with extra information about the webhook event that your action or worklow may use. Default: {}"
     required: false
 runs:
+  using: "composite"
   steps:
     - run: ${{ github.action_path }}/trigger-workflow-and-wait.sh
       shell: bash
