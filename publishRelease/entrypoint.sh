@@ -6,6 +6,9 @@
 
 set -o pipefail
 
+# set GITHUB Branch to env GItHUB_HEAD or master
+GITHUB_HEAD=${GITHUB_HEAD:-"master"}
+
 # ============================================
 # Function to create a new release in Github API
 # ============================================
@@ -22,7 +25,7 @@ request_create_feature_release(){
 	}'
 
 	json_body=$(echo "$json_body" | sed "s/@tag_name@/$git_tag/")
-	json_body=$(echo "$json_body" | sed "s/@branch@/master/")
+	json_body=$(echo "$json_body" | sed "s/@branch@/$GITHUB_HEAD/")
 	json_body=$(echo "$json_body" | sed "s/@release_name@/Release $git_tag/")
 	json_body=$(echo "$json_body" | sed "s/@description@/$DESCRIPTION/")
 
@@ -103,9 +106,9 @@ fi
 
 echo "DEBUG: current branch = $GITHUB_REF"
 
-master_branch=$(echo "$GITHUB_REF" | grep "master")
-if [ -z "$master_branch" ]; then
-    echo "This Action run only in master branch."
+head_branch=$(echo "$GITHUB_REF" | grep "$GITHUB_HEAD")
+if [ -z "$head_branch" ]; then
+    echo "This Action run only in head branch. Usaly main or master"
 	exit 0
 fi
 
