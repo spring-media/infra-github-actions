@@ -1,1 +1,0 @@
-This is an GitHub Action to run Helm commands.

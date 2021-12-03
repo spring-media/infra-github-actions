@@ -1,1 +1,0 @@
-This is a GitHub Action that publishes Helm charts to a Helm repository hosted on Artifactory.
