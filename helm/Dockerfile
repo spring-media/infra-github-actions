@@ -10,9 +10,9 @@ LABEL "com.github.actions.name"="Helm"
 LABEL "com.github.actions.description"="This is an Action to run Helm commands."
 
 ENV KUBECTL_VERSION="v1.9.7"
-ENV HELM_VERSION="v2.9.1"
+ENV HELM_VERSION="v2.16.12"
 
-RUN curl -Lo /tmp/helm-linux-amd64.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz \
+RUN curl -Lo /tmp/helm-linux-amd64.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz \
     && tar -xvf /tmp/helm-linux-amd64.tar.gz -C /tmp/ \
     && chmod +x /tmp/linux-amd64/helm && mv /tmp/linux-amd64/helm /usr/local/bin/ \
     && helm init --client-only \
